@@ -1,3 +1,10 @@
+import urllib.request as ur
+
+
+url='http://192.168.0.4:8080/shot.jpg'
+
+
+
 import numpy as np
 import cv2
 import dlib
@@ -39,13 +46,17 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 profileface = cv2.CascadeClassifier('haarcascade_profileface.xml')
 
 
-vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
-time.sleep(2.0)
+#vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
+#time.sleep(2.0)
 
 while(True):
 
-	frame = vs.read() 
-	frame = imutils.resize(frame, width=600)
+	imgResp=ur.urlopen(url)
+	imgNp=np.array(bytearray(imgResp.read()),dtype=np.uint8)
+	img=cv2.imdecode(imgNp,-1)
+
+	#frame = vs.read() 
+	frame = imutils.resize(img, width=600)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
 	rects = detector(gray, 0)
@@ -71,8 +82,9 @@ while(True):
 			#for (x, y) in shape:
 				#cv2.circle(frame, (x, y), 0, (0, 255, 255), -1)
 				#cv2.imshow("Frame", frame)
-
+		
 		if(len(all_face)>0):
+			print(all_face)
 			maximym, indexmax = index_max(all_face, 2)
 			x_index=all_face[indexmax][0]
 			y_index=all_face[indexmax][1]
@@ -81,6 +93,9 @@ while(True):
 			cv2.rectangle(frame,(x_index,y_index),(x_index+w_index,y_index+h_index),(255,0,0),2)
 			cv2.imshow("Frame", frame)
 
+			x1=x_index+int(0.5*w)
+			y1=y_index+int(0.5*h)
+			print("x= ",x1,"y= ",y1)
 	
 
 
@@ -90,23 +105,22 @@ while(True):
 			face= [x, y, w, h]
 			all_face_profil.append(face)
 
-
+		indexmax=0
 		if(len(all_face_profil)>0):
 			maximym, indexmax = index_max(all_face_profil, 2)
-			x_index=all_face[indexmax][0]
-			y_index=all_face[indexmax][1]
-			w_index=all_face[indexmax][2]
-			h_index=all_face[indexmax][3]
+			x_index=all_face_profil[indexmax][0]
+			y_index=all_face_profil[indexmax][1]
+			w_index=all_face_profil[indexmax][2]
+			h_index=all_face_profil[indexmax][3]
 			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
 			cv2.imshow("Frame", frame)
 
 
 
-	x1=x_index+int(0.5*w)
-	y1=y_index+int(0.5*h)
-	print("x= ",x1,"y= ",y1)
-	#font = cv2.FONT_HERSHEY_SIMPLEX
-
+			x1=x_index+int(0.5*w)
+			y1=y_index+int(0.5*h)
+			print("x= ",x1,"y= ",y1)
+	
 	cv2.imshow("Frame", frame)
 
 	key = cv2.waitKey(1) & 0xFF

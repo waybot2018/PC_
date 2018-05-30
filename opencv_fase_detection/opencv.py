@@ -93,10 +93,10 @@ while(True):
 
 		if(len(all_face_profil)>0):
 			maximym, indexmax = index_max(all_face_profil, 2)
-			x_index=all_face[indexmax][0]
-			y_index=all_face[indexmax][1]
-			w_index=all_face[indexmax][2]
-			h_index=all_face[indexmax][3]
+			x_index=all_face_profil[indexmax][0]
+			y_index=all_face_profil[indexmax][1]
+			w_index=all_face_profil[indexmax][2]
+			h_index=all_face_profil[indexmax][3]
 			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
 			cv2.imshow("Frame", frame)
 
